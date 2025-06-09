@@ -5,7 +5,7 @@ async function initializeExtension() {
   console.log('Initializing the extension')
   try {
     const result = await browserAPI.storage.sync.get('librephotosUrl');
-    const { librephotosUrl } = result;  // Safely access the result
+    const { librephotosUrl } = result;
     console.log(librephotosUrl)
     if (librephotosUrl) {
       if (browserAPI.scripting && browserAPI.scripting.registerContentScripts) {
@@ -26,9 +26,9 @@ async function initializeExtension() {
     } else {
       console.log('No URL configured; open options to set it.');
     }
-} catch (error) {
-  console.error('Storage access error:', error);  // Log for debugging
-}
+  } catch (error) {
+    console.error('Storage access error:', error);
+  }
 }
 
 // Run on installation or startup
@@ -38,15 +38,27 @@ browserAPI.runtime.onStartup.addListener(initializeExtension);
 browserAPI.contextMenus.create({
     id: "fullscreen-image",
     title: "View Image Full-Screen",
-    contexts: ["image"]  // Show the menu only on images
+    contexts: ["image"]
 });
 
-browserAPI.contextMenus.onClicked.addListener((info, tab) => {
+browserAPI.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === "fullscreen-image" && info.srcUrl) {
-        // Send a message to the content script with the image URL
-        browserAPI.tabs.sendMessage(tab.id, {
-            action: "requestFullScreen",
-            imageUrl: info.srcUrl
-        });
+        try {
+            // Inject content script if not already present
+            await browserAPI.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ["content.js"]
+            });
+
+            // Small delay to ensure script is loaded
+            setTimeout(() => {
+                browserAPI.tabs.sendMessage(tab.id, {
+                    action: "requestFullScreen",
+                    imageUrl: info.srcUrl
+                });
+            }, 100);
+        } catch (error) {
+            console.error('Error injecting content script:', error);
+        }
     }
 });
