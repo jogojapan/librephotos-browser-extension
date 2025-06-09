@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "LibrePhotos Full-Screen Viewer",
+    "version": "1.0",
+    "description": "Extension to view images in full-screen on LibrePhotos.",
+    "permissions": ["activeTab"],
+    "content_scripts": [
+        {
+          "matches": ["https://tempsx.chobycat.com/*"],
+          "js": ["content.js"],
+          "run_at": "document_start"
+        }
+    ]
+}
