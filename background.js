@@ -1,14 +1,13 @@
 // background.js
-chrome.contextMenus.create({
+browser.contextMenus.create({
     id: "fullscreen-image",
     title: "View Image Full-Screen",
-    contexts: ["image"]  // Show the menu only on images
+    contexts: ["image"]
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "fullscreen-image" && info.srcUrl) {
-        // Send a message to the content script with the image URL
-        chrome.tabs.sendMessage(tab.id, {
+        browser.tabs.sendMessage(tab.id, {
             action: "requestFullScreen",
             imageUrl: info.srcUrl
         });
