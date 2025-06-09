@@ -1,12 +1,14 @@
 // background.js
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+let librephotosUrl = null;
 
 async function initializeExtension() {
   console.log('Initializing the extension')
   try {
     const result = await browserAPI.storage.sync.get('librephotosUrl');
-    const { librephotosUrl } = result;
+    librephotosUrl = result.librephotosUrl;
     console.log(librephotosUrl)
+
     if (librephotosUrl) {
       if (browserAPI.scripting && browserAPI.scripting.registerContentScripts) {
         try {
@@ -20,45 +22,68 @@ async function initializeExtension() {
         } catch (error) {
           console.error('Error registering content script:', error);
         }
-      } else {
-        console.error('Scripting API is not available; check permissions and browser support.');
       }
-    } else {
-      console.log('No URL configured; open options to set it.');
     }
+
+    createContextMenus();
   } catch (error) {
     console.error('Storage access error:', error);
   }
 }
 
-// Run on installation or startup
+function createContextMenus() {
+  browserAPI.contextMenus.removeAll(() => {
+    browserAPI.contextMenus.create({
+      id: "librephotos-parent",
+      title: "LibrePhotos Fullscreen",
+      contexts: ["image"]
+    });
+
+    browserAPI.contextMenus.create({
+      id: "fullscreen-image",
+      parentId: "librephotos-parent",
+      title: "View image in fullscreen",
+      contexts: ["image"],
+      enabled: !!librephotosUrl
+    });
+
+    browserAPI.contextMenus.create({
+      id: "set-url",
+      parentId: "librephotos-parent",
+      title: "Set LibrePhotos URL",
+      contexts: ["image"]
+    });
+  });
+}
+
 browserAPI.runtime.onInstalled.addListener(initializeExtension);
 browserAPI.runtime.onStartup.addListener(initializeExtension);
 
-browserAPI.contextMenus.create({
-    id: "fullscreen-image",
-    title: "View Image Full-Screen",
-    contexts: ["image"]
+browserAPI.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === "fullscreen-image" && info.srcUrl && librephotosUrl) {
+    try {
+      await browserAPI.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["content.js"]
+      });
+
+      setTimeout(() => {
+        browserAPI.tabs.sendMessage(tab.id, {
+          action: "requestFullScreen",
+          imageUrl: info.srcUrl
+        });
+      }, 100);
+    } catch (error) {
+      console.error('Error injecting content script:', error);
+    }
+  } else if (info.menuItemId === "set-url") {
+    browserAPI.runtime.openOptionsPage();
+  }
 });
 
-browserAPI.contextMenus.onClicked.addListener(async (info, tab) => {
-    if (info.menuItemId === "fullscreen-image" && info.srcUrl) {
-        try {
-            // Inject content script if not already present
-            await browserAPI.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ["content.js"]
-            });
-
-            // Small delay to ensure script is loaded
-            setTimeout(() => {
-                browserAPI.tabs.sendMessage(tab.id, {
-                    action: "requestFullScreen",
-                    imageUrl: info.srcUrl
-                });
-            }, 100);
-        } catch (error) {
-            console.error('Error injecting content script:', error);
-        }
-    }
+browserAPI.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'sync' && changes.librephotosUrl) {
+    librephotosUrl = changes.librephotosUrl.newValue;
+    createContextMenus();
+  }
 });
