@@ -1,9 +1,8 @@
-// background.js
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
 let librephotosUrl = null;
 
 async function initializeExtension() {
-  console.log('Initializing the extension')
+  console.debug('Initializing the extension.')
   try {
     const result = await browserAPI.storage.sync.get('librephotosUrl');
     librephotosUrl = result.librephotosUrl;

@@ -1,11 +1,9 @@
-console.debug('Content script loaded successfully');
-
 function requestFullScreen(element) {
-    if (element.requestFullscreen) {
-        element.requestFullscreen();
-    } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-    }
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  }
 }
 
 function initScript() {
@@ -23,17 +21,16 @@ function initScript() {
       }
 
       if (targetImage) {
-        console.debug('Target image found and requesting full-screen.');
         requestFullScreen(targetImage);
       } else {
-        console.debug('Target image still not found. URL used:', fullUrl);
+        console.debug('Target image not found. URL used:', fullUrl);
       }
     }
   });
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initScript);
+  document.addEventListener('DOMContentLoaded', initScript);
 } else {
-    initScript();
+  initScript();
 }
