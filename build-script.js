@@ -27,11 +27,12 @@ function getFiles(pattern) {
 // Get the files to include
 const jsFiles = getFiles('*.js');
 const htmlFiles = getFiles('*.html');
-const filesToAdd = [...jsFiles, ...htmlFiles, 'manifest.json'];
+const iconFiles = getFiles('icons/*.png');
+const filesToAdd = [...jsFiles, ...htmlFiles, ...iconFiles, 'manifest.json'];
 
 // Create the archive
 const output = fs.createWriteStream(outputFile);
-const archive = archiver('zip', { zlib: { level: 9 } });  // Use ZIP format for both
+const archive = archiver('zip', { zlib: { level: 9 } });
 
 output.on('close', () => {
   console.log(`${archive.pointer()} total bytes archived.`);
@@ -47,7 +48,7 @@ archive.pipe(output);
 // Add files to the archive
 filesToAdd.forEach(file => {
   if (fs.existsSync(file)) {
-    archive.file(file, { name: path.basename(file) });  // Add file with its original name
+    archive.file(file, { name: file });
   } else {
     console.warn(`File not found: ${file}`);
   }
