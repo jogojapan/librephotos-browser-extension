@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "LibrePhotos Full-Screen Viewer",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Extension to view images in full-screen on LibrePhotos.",
   "permissions": ["activeTab", "contextMenus", "scripting", "storage"],
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
   "options_ui": {
     "page": "options.html",
