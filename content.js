@@ -9,47 +9,44 @@ function requestFullScreen(element) {
 }
 
 function initScript() {
-    const gallerySelector = '.mantine-Carousel-viewport';  // Adjust based on your gallery container
-
-    // Option 1: Use event delegation on the gallery for clicks
-    document.addEventListener('click', (event) => {
-        if (event.target.closest(gallerySelector)) {  // Assuming clicks on gallery items
-            setTimeout(() => {  // Short delay for DOM updates
-                const imageElement = document.querySelector('.mantine-Carousel-viewport img');  // Or your simplified selector
-                if (imageElement) {
-                    console.log('Image element found after click:', imageElement);
-                    imageElement.addEventListener('dblclick', () => requestFullScreen(imageElement));
-                    // Add other logic, like the full-screen button
-                } else {
-                    console.error('Image element still not found after click.');
-                }
-            }, 500);  // Wait 500ms for the DOM to update
-        }
-    });
-
-    // Option 2: Use MutationObserver for DOM changes
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.addedNodes.length > 0) {
-                const imageElement = document.querySelector('.mantine-Carousel-viewport img');  // Target the dynamic image
-                if (imageElement) {
-                    console.log('New image element detected:', imageElement);
-                    imageElement.addEventListener('dblclick', () => requestFullScreen(imageElement));
-                    // You can stop observing after finding it if needed
-                    observer.disconnect();  // Optional: Disconnect after first detection
-                }
-            }
-        });
-    });
-
-    // Start observing the relevant container
-    const targetNode = document.querySelector(gallerySelector);  // E.g., the carousel or gallery area
-    if (targetNode) {
-        observer.observe(targetNode, { childList: true, subtree: true });
+  // Your existing logic to find the image element
+  let imageElement;
+  const observer = new MutationObserver(() => {
+    console.log('Mutation observed')
+    imageElement = document.querySelector('img[alt="Main Content"]');
+    if (imageElement) {
+      console.log('Image element found and ready.');
     }
+  });
+
+  const targetNode = document.querySelector('.mantine-Carousel-viewport');
+  if (targetNode) {
+    observer.observe(targetNode, { childList: true, subtree: true });
+  }
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === "requestFullScreen") {
+      const fullUrl = message.imageUrl;  // Full URL from context menu
+      const baseUrl = new URL(fullUrl).pathname;  // Extract pathname for matching
+      let targetImage = document.querySelector(`img[src="${fullUrl}"]`);
+      if (!targetImage) {
+        targetImage = document.querySelector(`img[src*="${baseUrl}"]`);
+        if (!targetImage) {
+          targetImage = document.querySelector('.mantine-Carousel-viewport img');
+        }
+      }
+
+      if (targetImage) {
+        console.log('Target image found and requesting full-screen.');
+        requestFullScreen(targetImage);
+      } else {
+        console.error('Target image still not found. URL used:', fullUrl);
+      }
+    }
+  });
 }
 
-// Run the script
+// Run the script as before
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initScript);
 } else {
