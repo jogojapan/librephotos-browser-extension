@@ -3,34 +3,30 @@ const path = require('path');
 const archiver = require('archiver');
 const glob = require('glob');
 
-const platform = process.argv[2] || 'chromium';  // e.g., 'gecko' or 'chromium'
+const platform = process.argv[2] || 'chromium';
 
 let manifest;
 let outputFile;
 
 if (platform === 'gecko') {
   manifest = require('./manifest-gecko.json');
-  outputFile = 'librephotos-browser-extension.xpi';  // Output for Firefox
+  outputFile = 'librephotos-browser-extension.xpi';
 } else {
   manifest = require('./manifest-chromium.json');
-  outputFile = 'librephotos-browser-extension.zip';  // Output for Chromium
+  outputFile = 'librephotos-browser-extension.zip';
 }
 
-// Write the manifest.json
 fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 2));
 
-// Function to get files matching a pattern
 function getFiles(pattern) {
-  return glob.sync(pattern, { nodir: true });  // Get files only, excluding directories
+  return glob.sync(pattern, { nodir: true });
 }
 
-// Get the files to include
 const jsFiles = getFiles('*.js');
 const htmlFiles = getFiles('*.html');
 const iconFiles = getFiles('icons/*.png');
 const filesToAdd = [...jsFiles, ...htmlFiles, ...iconFiles, 'manifest.json'];
 
-// Create the archive
 const output = fs.createWriteStream(outputFile);
 const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -45,7 +41,6 @@ archive.on('error', (err) => {
 
 archive.pipe(output);
 
-// Add files to the archive
 filesToAdd.forEach(file => {
   if (fs.existsSync(file)) {
     archive.file(file, { name: file });
