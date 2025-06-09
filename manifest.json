@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "LibrePhotos Full-Screen Viewer",
+  "name": "LibrePhotos Tools",
   "version": "1.1",
-  "description": "Extension to view images in full-screen on LibrePhotos.",
+  "description": "Extension for a full-screen mode and other tools for LibrePhotos.",
   "permissions": ["activeTab", "contextMenus", "scripting", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -10,7 +10,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "librephotos-fullscreen@chobycat.com"
+      "id": "librephotos-browser-extension@chobycat.com"
     }
   },
   "options_ui": {
@@ -19,7 +19,7 @@
   },
   "content_scripts": [],
   "action": {
-    "default_title": "LibrePhotos Full-Screen Viewer",
+    "default_title": "LibrePhotos Tools",
     "default_popup": ""
   }
 }
