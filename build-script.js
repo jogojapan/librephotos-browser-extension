@@ -10,10 +10,10 @@ let outputFile;
 
 if (platform === 'gecko') {
   manifest = require('./manifest-gecko.json');
-  outputFile = 'extension.xpi';  // Output for Firefox
+  outputFile = 'librephotos-browser-extension.xpi';  // Output for Firefox
 } else {
   manifest = require('./manifest-chromium.json');
-  outputFile = 'extension.zip';  // Output for Chromium
+  outputFile = 'librephotos-browser-extension.zip';  // Output for Chromium
 }
 
 // Write the manifest.json
