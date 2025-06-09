@@ -1,5 +1,7 @@
 # LibrePhotos Browser Extension
-This is a browser extension for Chromium- and Gecko-based browsers (i.e., including Chrome and Firefox) that adds a few features to LibrePhotos websites as you browse them.
+This is a browser extension for Chromium- and Gecko-based browsers
+(i.e., including Chrome and Firefox) that adds a few features to
+LibrePhotos websites as you browse them.
 
 ## Features
 We currently support only one feature:
@@ -8,7 +10,14 @@ We currently support only one feature:
 We are planning to add the features below:
 - Slideshow
 
-These are features that are missing from the official LibrePhotos frontend. We hope they'll one day be added to the main frontend code, but for the time being, adding them through this browser extension should work.
+These are features that are missing from the official LibrePhotos
+frontend. We hope they'll one day be added to the main frontend code,
+but for the time being, adding them through this browser extension
+should work.
+
+Note that for some there are feature requests to the LibrePhotos core
+repo:
+* [Fullscreen Button](https://github.com/LibrePhotos/librephotos/issues/1139)
 
 ## Building
 Obtain the source code as follows:
