@@ -1,3 +1,7 @@
+if (typeof brAPI === 'undefined') {
+  var brAPI = typeof browser !== 'undefined' ? browser : chrome;
+}
+
 function requestFullScreen(element) {
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -8,7 +12,7 @@ function requestFullScreen(element) {
 
 function initScript() {
   let imageElement;
-  chrome.runtime.onMessage.addListener((message) => {
+  brAPI.runtime.onMessage.addListener((message) => {
     if (message.action === "requestFullScreen") {
       const fullUrl = message.imageUrl;  // Full URL from context menu
       const baseUrl = new URL(fullUrl).pathname;  // Extract pathname for matching

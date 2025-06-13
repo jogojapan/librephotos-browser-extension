@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LibrePhotos Tools",
-  "version": "1.3",
+  "version": "1.5",
   "description": "Browser extension for LibrePhotos, including full-screen feature for the gallery.",
   "icons": {
     "16": "icons/icon-16x16.png",

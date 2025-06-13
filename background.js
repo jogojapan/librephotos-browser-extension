@@ -34,7 +34,7 @@ function createContextMenus() {
   browserAPI.contextMenus.removeAll(() => {
     browserAPI.contextMenus.create({
       id: "librephotos-parent",
-      title: "LibrePhotos Fullscreen",
+      title: "LibrePhotos Tools",
       contexts: ["image"]
     });
 
